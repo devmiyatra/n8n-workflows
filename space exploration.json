@@ -1,0 +1,194 @@
+{
+  "name": "space exploration",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "d4e9dec9-049d-4840-8c66-a17e7fa7cb2e",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        0
+      ],
+      "id": "f876f3a1-e57e-44bb-bb9e-eb567b2c9033",
+      "name": "Webhook",
+      "webhookId": "d4e9dec9-049d-4840-8c66-a17e7fa7cb2e"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1MdxNWQ6pw3jaWpprAZmD_fQTBc_CFUO04Y9Erou4GyQ",
+          "mode": "list",
+          "cachedResultName": "N8n space exploration",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MdxNWQ6pw3jaWpprAZmD_fQTBc_CFUO04Y9Erou4GyQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MdxNWQ6pw3jaWpprAZmD_fQTBc_CFUO04Y9Erou4GyQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $json.body.name }}",
+            "age": "={{ $json.body.age }}",
+            "email": "={{ $json.body.email }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "age",
+              "displayName": "age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        160,
+        0
+      ],
+      "id": "0b8e2a06-302b-47bc-baa4-fc23c31ef45f",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uS7uGEYdTziwKaR1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.nasa",
+      "typeVersion": 1,
+      "position": [
+        352,
+        0
+      ],
+      "id": "a4ab63ba-1588-41f0-8939-bb58d77b82ce",
+      "name": "Get the astronomy picture of the day",
+      "credentials": {
+        "nasaApi": {
+          "id": "gCi5432AxMlfd6BX",
+          "name": "NASA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Append row in sheet').item.json.email }}",
+        "subject": "space exploration",
+        "emailType": "text",
+        "message": "=Hi, Here is your daily image.",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        0
+      ],
+      "id": "d185084c-e86c-4462-89da-87e2767addef",
+      "name": "Send a message",
+      "webhookId": "83e719f0-1137-4726-9bdd-e9845bb9e15f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "aKeT66G33xnEqRRa",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Get the astronomy picture of the day",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get the astronomy picture of the day": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f7094829-0bd4-451d-8d5a-9c043ce37a76",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c6628e6a843d5ea8ef243d282bbca5553c86feaf62a51598d5f3857b2227043e"
+  },
+  "id": "VhdKBoQiT7F3Nqc9",
+  "tags": []
+}

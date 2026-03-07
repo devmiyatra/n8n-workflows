@@ -1,0 +1,246 @@
+{
+  "name": "Linkedin_Job_Finder",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "dc93bcd2-5de0-4294-937c-3be11f18b690",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/bebity~linkedin-jobs-scraper/runs?token=apify_api_QgLgCq1xzib1CtFkZ8FqJFtb9guXhY0j7hM9",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"contractType\": \"F\",\n    \"experienceLevel\": \"2\",\n    \"location\": \"India\",\n    \"proxy\": {\n        \"useApifyProxy\": true,\n        \"apifyProxyGroups\": [\n            \"RESIDENTIAL\"\n        ]\n    },\n    \"publishedAt\": \"r604800\",\n    \"rows\": 20,\n    \"title\": \"Web Developer\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "41e18548-0008-4b42-9d6a-e1224c80bc5a",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        0
+      ],
+      "id": "70abcf1f-0f00-4bf7-bb2a-77055b2cc2bd",
+      "name": "Wait",
+      "webhookId": "e33c9987-8c1a-46b7-8a84-d274075756d0"
+    },
+    {
+      "parameters": {
+        "url": "https://api.apify.com/v2/acts/bebity~linkedin-jobs-scraper/runs/last/dataset/items?token=apify_api_QgLgCq1xzib1CtFkZ8FqJFtb9guXhY0j7hM9",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        592,
+        0
+      ],
+      "id": "fe6fcf94-7b27-4ed8-b613-4bbb04db8756",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1IW531uxw3ExHxu9b2jgbNTdUghtzYGMqPayGV6U7tA4",
+          "mode": "list",
+          "cachedResultName": "Linkedin_Job_Sracper",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IW531uxw3ExHxu9b2jgbNTdUghtzYGMqPayGV6U7tA4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IW531uxw3ExHxu9b2jgbNTdUghtzYGMqPayGV6U7tA4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Job Id": "={{ $json.id }}",
+            "Title of job": "={{ $json.title }}",
+            "job url": "={{ $json.jobUrl }}",
+            "Company name": "={{ $json.companyName }}",
+            "Company URL": "={{ $json.companyUrl }}",
+            "Location ": "={{ $json.location }}",
+            "Description ": "={{ $json.description }}",
+            "Apply URL": "={{ $json.applyUrl }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Job Id",
+              "displayName": "Job Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title of job",
+              "displayName": "Title of job",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "job url",
+              "displayName": "job url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company name",
+              "displayName": "Company name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company URL",
+              "displayName": "Company URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location ",
+              "displayName": "Location ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description ",
+              "displayName": "Description ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Apply URL",
+              "displayName": "Apply URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        0
+      ],
+      "id": "475d8a39-2fff-4843-adfc-916e7e9c5ce4",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uS7uGEYdTziwKaR1",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e1d25f79-6108-4e0b-8137-358031e85f35",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c6628e6a843d5ea8ef243d282bbca5553c86feaf62a51598d5f3857b2227043e"
+  },
+  "id": "A8kesKxDZtsth6tu",
+  "tags": []
+}

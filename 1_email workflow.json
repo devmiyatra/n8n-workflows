@@ -1,0 +1,284 @@
+{
+  "name": "1_email workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Job Application Form",
+        "formDescription": "Please fill out this form to apply for current or future openings at our company. The information provided will be reviewed by our team, and shortlisted candidates will be contacted.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email Address",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Mobile Number",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Current City",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "LinkedIn Profile (optional)",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Role Applying For",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "HR / Recruiter"
+                  },
+                  {
+                    "option": "Data Analyst"
+                  },
+                  {
+                    "option": "Software Developer"
+                  },
+                  {
+                    "option": "AI / ML Engineer"
+                  },
+                  {
+                    "option": "QA / Testing"
+                  },
+                  {
+                    "option": "UI / UX Designer"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Experience Level",
+              "fieldType": "radio",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Fresher"
+                  },
+                  {
+                    "option": "0–1 Years"
+                  },
+                  {
+                    "option": "1–2 Years"
+                  },
+                  {
+                    "option": "2–3 Years"
+                  },
+                  {
+                    "option": "3+ Years"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Resume (PLEASE UPLOAD GOOGLE DRIVE LINK)",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        192,
+        112
+      ],
+      "id": "6d712e40-15c6-4a45-8248-f3031703e73d",
+      "name": "On form submission",
+      "webhookId": "19332717-9f93-4977-8165-88ea7843d29f"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1p_HWXcGjY7sY5If099hedVC0qkK3xUN88vQzoONpEFo",
+          "mode": "list",
+          "cachedResultName": "job applications",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p_HWXcGjY7sY5If099hedVC0qkK3xUN88vQzoONpEFo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p_HWXcGjY7sY5If099hedVC0qkK3xUN88vQzoONpEFo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NAME": "={{ $json['Full Name'] }}",
+            "EMAIL": "={{ $json['Email Address'] }}",
+            "NUMBER": "={{ $json['Mobile Number'] }}",
+            "CITY": "={{ $json['Current City'] }}",
+            "LINKEDIN": "={{ $json['LinkedIn Profile (optional)'] }}",
+            "ROLE": "={{ $json['Role Applying For'] }}",
+            "EXPERIENCE": "={{ $json['Experience Level'] }}",
+            "RESUME": "={{ $json['Resume (PLEASE UPLOAD GOOGLE DRIVE LINK)'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "NAME",
+              "displayName": "NAME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "NUMBER",
+              "displayName": "NUMBER",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CITY",
+              "displayName": "CITY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "LINKEDIN",
+              "displayName": "LINKEDIN",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ROLE",
+              "displayName": "ROLE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "EXPERIENCE",
+              "displayName": "EXPERIENCE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "RESUME",
+              "displayName": "RESUME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        400,
+        112
+      ],
+      "id": "cf6f3d97-b2b1-4471-8e14-939b748a9d95",
+      "name": "Append row in sheet"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.EMAIL }}",
+        "subject": "Application Received – Thank You for Applying",
+        "message": "=Hello {{ $json.NAME }},\n\nThank you for applying for the {{ $json.ROLE }} position at our company and for taking the time to submit your application.\n\nWe have successfully received your details. Our team will review your profile based on current and upcoming requirements. If your profile aligns with a suitable opportunity, we will contact you regarding the next steps in the selection process.\n\nPlease note that only shortlisted candidates will be contacted.\n\nThank you for your interest in working with us, and we wish you all the best.\n\nBest regards,\nHR Team\nxyz technohub ",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        112
+      ],
+      "id": "6db72e58-a300-46ee-812b-f14d8f8d1d68",
+      "name": "Send a message",
+      "webhookId": "b709d986-b1e0-4f9c-b04b-af70a9a43c09"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "14a8f6f1-e9ae-454a-bc7a-77f23063986d",
+  "meta": {
+    "instanceId": "372c2347c36f5bbc4592dfa0abc1af0acbea5e153268f5135429c6cb9d717ed8"
+  },
+  "id": "aiZc5yeu35kcCKTS",
+  "tags": []
+}

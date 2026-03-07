@@ -1,0 +1,336 @@
+{
+  "name": "LinkedIn Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1JoF0DHKRjwKIGkffylWgXvEbDq-3XXWjdowtbwS-99I",
+          "mode": "list",
+          "cachedResultName": "n8n demo workbook",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JoF0DHKRjwKIGkffylWgXvEbDq-3XXWjdowtbwS-99I/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "linkedlin",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JoF0DHKRjwKIGkffylWgXvEbDq-3XXWjdowtbwS-99I/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status ",
+              "lookupValue": "To Do"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1ce5a869-3b87-4e45-afc8-04b5def03265",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uS7uGEYdTziwKaR1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"What are the latest update on {{ $json['Rough Topic name '] }}\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 3,\n  \"topic\": \"general\",\n  \"time_range\": null,\n  \"start_date\": \"2025-02-09\",\n  \"end_date\": \"2025-12-29\",\n  \"include_answer\": false,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_favicon\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": [],\n  \"country\": null,\n  \"auto_parameters\": false,\n  \"exact_match\": false,\n  \"include_usage\": false\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "c905ece7-31da-4d81-8639-6cbf09e0d4b1",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic for linkedin post:{{ $('Get row(s) in sheet').item.json['Rough Topic name '] }}\n\nrefrance title and articles\n\nTitle 1:{{ $json.results[0].title }}\nArticle 1:{{ $json.results[0].content }}\nUrl 1:{{ $json.results[0].url }}\n\nTitle 2:{{ $json.results[1].title }}\nArticle 2:{{ $json.results[1].content }}\nUrl 2:{{ $json.results[1].url }}\n\nTitle 3:{{ $json.results[2].title }}\nArticle 3:{{ $json.results[2].content }}\nUrl 3:{{ $json.results[2].url }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Role\nAct like a LinkedIn expert who specializes in generating LinkedIn friendly post. You content is engaging for the audience and has a tendency to go viral.\n\n# To do\n- You'll get 3 references which will include title of the article, parsed content which is relevant to the topic of post, URL from which content is parsed.\n- Using all this information, you have generate a linkedIn friendly post which will get us engagement so that we can have an active profile.\n\n# Output\n- Return the title and the content of the article in JSON format as,\nTitle:\nContent:"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "bd20127c-aae5-400c-bc10-6db04a5b5e34",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        496,
+        208
+      ],
+      "id": "e619ce4d-80f3-4c3d-8ab2-b4f33009bd0d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "54tQxQIaFMxF91Sb",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1JoF0DHKRjwKIGkffylWgXvEbDq-3XXWjdowtbwS-99I",
+          "mode": "list",
+          "cachedResultName": "n8n demo workbook",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JoF0DHKRjwKIGkffylWgXvEbDq-3XXWjdowtbwS-99I/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "linkedlin",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JoF0DHKRjwKIGkffylWgXvEbDq-3XXWjdowtbwS-99I/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Rough Topic name ": "={{ $('Get row(s) in sheet').item.json['Rough Topic name '] }}",
+            "status ": "Done",
+            "Topic name (Linkedin)": "={{ $json.output.Title }}",
+            "Artical content ": "={{ $json.output.Content }}"
+          },
+          "matchingColumns": [
+            "Rough Topic name "
+          ],
+          "schema": [
+            {
+              "id": "Rough Topic name ",
+              "displayName": "Rough Topic name ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status ",
+              "displayName": "status ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Topic name (Linkedin)",
+              "displayName": "Topic name (Linkedin)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Artical content ",
+              "displayName": "Artical content ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        976,
+        0
+      ],
+      "id": "9b7ba6fc-7aaa-4395-a17f-ace435eda02c",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uS7uGEYdTziwKaR1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"Title\": {\n      \"type\": \"string\",\n      \"description\": \"The main headline or title of the article/post.\",\n      \"minLength\": 5\n    },\n    \"Content\": {\n      \"type\": \"string\",\n      \"description\": \"The full body content including headings, insights, bullet points, and actionable takeaways.\",\n      \"minLength\": 50\n    }\n  },\n  \"required\": [\"Title\", \"Content\"],\n  \"additionalProperties\": false\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        800,
+        208
+      ],
+      "id": "5e1117a0-12b9-4dcf-9e34-c377f4fc5b27",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        16,
+        0
+      ],
+      "id": "27f03ef9-21c4-4ba4-ae9d-2f4141525d04",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "0e6fde6b-7532-4bb9-9505-3171ee4a20bd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c6628e6a843d5ea8ef243d282bbca5553c86feaf62a51598d5f3857b2227043e"
+  },
+  "id": "R5X4oOOB8xg6HVEj",
+  "tags": []
+}

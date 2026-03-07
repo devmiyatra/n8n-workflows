@@ -1,0 +1,427 @@
+{
+  "name": "6_physio appointment",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Role\nYou're a smart and helpful receptionist agent for Dr Stephen Strange Physiotherapy clinic.\n\n# How to behave / What to do\n- The patients will try to schedule an appointment with Dr Strange.\n- First ask their details like name, age, gender, phone number, email address and what's the problem.\n- After you get these data points, log this in the patient database using the 'add patient' tool.\n- After that you have to check for the free slots on Dr Strange's calendar using tools and suggest the patient with the available time slots for the requested date.\n- Once they confirm the slot, you have to block the calendar using 'create new events' tool and send a confirmation email with all the details to the patient on their email address using the 'send message' tool.\n\n# Tools available\n- create new events: Use this tool to block the calendar. Before blocking the calendar, use the 'get events' tool to check for available slots.\n- get events: Use this tool to look for the events on the calendar. This will give you an idea of the available slots.\n- Add patient: Use this tool to add the patient details like name, age, gender, phone number, email and What's the problem.\n- send message: Use this tool to send email to the patients.\n\n# Tone\n- Be professional, polite, caring.\n\n# Important information\n- Current date and time: {{ $now }}\n- The working timings are 9 am to 6 pm. If the patient is asking for a slot before 9 am or after 6 pm, tell them to book the slot for another day.\n- Don't give slots for a Sunday and public holiday's.\n- Don't give any slots between 1 pm to 2 pm because this is Doctor's lunch time.\n- Block the slot for 30 mins only. Don't give more time that that.\n- Do not show the events of other patients which are blocked on the calendar to anyone.\n- Do not take appointments for the dates and time slots which are prior to current date and time (past dates).\n- Do not tell paitent that you add thier data in databsed "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        272,
+        0
+      ],
+      "id": "34c403b1-0683-4ea9-ace9-d938bcc97ce1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "369fb669-de05-4872-9dc6-f9417737d20b",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "NbFDNZdjZCNlr4ok",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        192,
+        208
+      ],
+      "id": "92331c55-e093-4590-8438-c76a55d7b881",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "devmiyatra05@gmail.com",
+          "mode": "list",
+          "cachedResultName": "devmiyatra05@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        224
+      ],
+      "id": "b3af862d-a0d6-4b93-a7ff-143a82f53e41",
+      "name": "Create an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "K12Yg8oBGbd6lff1",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "devmiyatra05@gmail.com",
+          "mode": "list",
+          "cachedResultName": "devmiyatra05@gmail.com"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        544,
+        144
+      ],
+      "id": "c9fe8546-9827-4aa2-9dc8-f8cb35c76392",
+      "name": "get events",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "K12Yg8oBGbd6lff1",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1cJ0gGqow_epuLgdhuddQr8PJca5cr02YBRk-DknMrJY",
+          "mode": "list",
+          "cachedResultName": "patient database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cJ0gGqow_epuLgdhuddQr8PJca5cr02YBRk-DknMrJY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cJ0gGqow_epuLgdhuddQr8PJca5cr02YBRk-DknMrJY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Age": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Age', ``, 'string') }}",
+            "Gender": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Gender', ``, 'string') }}",
+            "Phone Number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Phone_Number', ``, 'string') }}",
+            "Email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email', ``, 'string') }}",
+            "What's Problem": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('What_s_Problem', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "What's Problem",
+              "displayName": "What's Problem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        304,
+        240
+      ],
+      "id": "c1d72dd9-70dd-4bf1-a82a-8eb0393c7a34",
+      "name": "Add Patient",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YVmu5hItnI7ndflt",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        96
+      ],
+      "id": "a3bf06e5-d646-4a14-97fd-c201439045d8",
+      "name": "Send message",
+      "webhookId": "bffe220f-883a-49f6-90d7-4724a3da34fb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ukuNGeLtMR1I3oXK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lovable-chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "e71e1787-c7d5-43a0-ae53-079ef2fee4d9",
+      "name": "Receive Message from Frontend",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -144,
+        16
+      ],
+      "webhookId": "4e77c2fc-dc44-4c36-9db2-4eacb924a467"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "id": "b1ea928d-80fd-458a-9add-7a466fab5d9f",
+      "name": "Send Response to Frontend",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        752,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "chatInput",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "sessionId",
+              "value": "={{ $json.body.sessionId || 'default-session' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f8163045-055f-4b39-beb6-c0f8eb799f94",
+      "name": "Format Webhook Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        48,
+        16
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get events": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Patient": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send Response to Frontend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive Message from Frontend": {
+      "main": [
+        [
+          {
+            "node": "Format Webhook Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Webhook Input": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "cf44c588-5796-4da3-b456-5789419bccdf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9cff7ad16c3727bd87c2aec1b4da4fd643f49da1dc14a101f190b596015c8c04"
+  },
+  "id": "GfwbWVWI2NSzR4rC",
+  "tags": []
+}

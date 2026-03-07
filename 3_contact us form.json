@@ -1,0 +1,243 @@
+{
+  "name": "3_contact us form",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a9cdb38d-5585-49ee-a73a-4419e8665f65",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "822204ea-b014-42b3-8efe-b18f6fd5d646",
+      "name": "Webhook",
+      "webhookId": "a9cdb38d-5585-49ee-a73a-4419e8665f65"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1QIwngokWbB7b7_6qyXlKpRRHYWdj9mhDjb2G6J6rtfE",
+          "mode": "list",
+          "cachedResultName": "contact us",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QIwngokWbB7b7_6qyXlKpRRHYWdj9mhDjb2G6J6rtfE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QIwngokWbB7b7_6qyXlKpRRHYWdj9mhDjb2G6J6rtfE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.body.fullName }}",
+            "Email": "={{ $json.body.email }}",
+            "Phone Number ": "={{ $json.body.mobile }}",
+            "Query ": "={{ $json.body.message }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number ",
+              "displayName": "Phone Number ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Query ",
+              "displayName": "Query ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "00e1420c-ba3c-4fa1-abee-94f13828203a",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "J0rRUPMGGbppBNbb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Query: {{ $json['Query '] }}"
+            },
+            {
+              "role": "system",
+              "content": "Act like a master trainer who is an expert in technical fields like prompting, ML, GenAi, data science and other related technologies. \n\nYou will get a query and you've to answer that will following rules,\n-if it's technical query, answer it in very simple, human like manner with real world examples and analogies. \n-if it's not a technical query, just reply, \" i'm not the right person for this. Please get in touch with dev miyatra at 9998717833\"."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "text"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "e1fc631d-0a4c-4251-9e99-96abf73aa17b",
+      "name": "Message a model"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Append row in sheet').item.json.Email }}",
+        "subject": "Thank you for sending your query.",
+        "emailType": "text",
+        "message": "=Dear {{ $('Append row in sheet').item.json.Name }}\n\nI am glad that yout asked me a doubt. Please find the response below.\n\nYour Query: {{ $('Append row in sheet').item.json['Query '] }}\nResponse: {{ $json.output[0].content[0].text }}\nIn case of any concerns, please feel free to reach out to me.\n\nRegards",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        0
+      ],
+      "id": "c89a324d-d6b5-4630-993a-0a68d99cc109",
+      "name": "Send a message",
+      "webhookId": "931b1f09-d8e8-415a-9165-1ddcf6854968",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "USEnrHqrBIMgtdY5",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $('Message a model').item.json.output[0].content[0].text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        976,
+        0
+      ],
+      "id": "e6a9c1a1-9f4c-47bf-a957-b0177f56d619",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "d88d3610-0445-4cb3-bf61-0f5b02af7923",
+  "meta": {
+    "instanceId": "372c2347c36f5bbc4592dfa0abc1af0acbea5e153268f5135429c6cb9d717ed8"
+  },
+  "id": "6g1wis9ukfqBhEZn",
+  "tags": []
+}

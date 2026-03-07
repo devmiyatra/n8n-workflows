@@ -1,0 +1,85 @@
+{
+  "name": "Dentist-Google-Maps-Scraper",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "262906e8-9f07-4d66-bffc-84c9c689a3cf",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/compass~crawler-google-places/runs?token=apify_api_QgLgCq1xzib1CtFkZ8FqJFtb9guXhY0j7hM9",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"includeWebResults\": false,\n    \"language\": \"en\",\n    \"locationQuery\": \"Surat, Gujarat, India\",\n    \"maxCrawledPlacesPerSearch\": 10,\n    \"maxImages\": 0,\n    \"maximumLeadsEnrichmentRecords\": 0,\n    \"scrapeContacts\": false,\n    \"scrapeDirectories\": false,\n    \"scrapeImageAuthors\": false,\n    \"scrapePlaceDetailPage\": false,\n    \"scrapeReviewsPersonalData\": true,\n    \"scrapeSocialMediaProfiles\": {\n        \"facebooks\": false,\n        \"instagrams\": false,\n        \"tiktoks\": false,\n        \"twitters\": false,\n        \"youtubes\": false\n    },\n    \"scrapeTableReservationProvider\": false,\n    \"searchStringsArray\": [\n        \"Dentist\"\n    ],\n    \"skipClosedPlaces\": false\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "e5b6b55e-f21f-4e85-97a7-d6759ef94360",
+      "name": "Run_The_Actor"
+    },
+    {
+      "parameters": {
+        "url": "https://api.apify.com/v2/acts/compass~crawler-google-places/runs/last/dataset/items?token=apify_api_QgLgCq1xzib1CtFkZ8FqJFtb9guXhY0j7hM9",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "9b56b429-bd8d-4c2a-b3a3-9123a97a7c52",
+      "name": "GET_The_Result"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Run_The_Actor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run_The_Actor": {
+      "main": [
+        [
+          {
+            "node": "GET_The_Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "0e057fc1-a934-42a8-aa03-9f84afac407d",
+  "meta": {
+    "instanceId": "c6628e6a843d5ea8ef243d282bbca5553c86feaf62a51598d5f3857b2227043e"
+  },
+  "id": "3DZAKyt7marSUynR",
+  "tags": []
+}

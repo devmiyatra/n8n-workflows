@@ -1,0 +1,149 @@
+{
+  "name": "5_AI agent",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "67ef7e82-f1c4-4f7a-b768-2085926d21df",
+      "name": "When chat message received",
+      "webhookId": "54222cce-4880-4c50-af7a-49a14a1e713e"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Role\nYou are a Google Calendar Scheduling AI Agent that helps to add, get, update or delete the calendar events.\n\n# What to do\nYour responsibility is to understand natural language scheduling requests and convert them into structured calendar event data that can be executed using calendar tools.\n\n# Tools available\n- create new events: Use this tool when a new event has to be created.\n\n# Important note\n- Current date and time: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0132abed-b4ba-4cb5-87bf-69e7d640e64f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "d7f9d8ad-99c1-4d8a-930e-f2658b5d6d60",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        208
+      ],
+      "id": "40694ef2-5d6e-41b8-ae74-92ebcedef56d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "devmiyatra07@gmail.com",
+          "mode": "list",
+          "cachedResultName": "devmiyatra07@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        352,
+        160
+      ],
+      "id": "525ac480-2082-46a9-9c81-59fe3d6f64b8",
+      "name": "create new events"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create new events": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "848af82e-49e7-40ec-91f2-e90268bcf930",
+  "meta": {
+    "instanceId": "372c2347c36f5bbc4592dfa0abc1af0acbea5e153268f5135429c6cb9d717ed8"
+  },
+  "id": "RZNrAHQnYJbpdOFn",
+  "tags": []
+}
